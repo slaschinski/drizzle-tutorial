@@ -5,6 +5,7 @@ import {
   index,
   integer,
   pgTableCreator,
+  primaryKey,
   serial,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -28,6 +29,17 @@ export const categories = pgTable(
   }),
 );
 
+export const tags = pgTable(
+  "tag",
+  {
+    id: serial("id").primaryKey(),
+    name: varchar("name", { length: 256 }),
+  },
+  (example) => ({
+    nameIndex: index("name_idx").on(example.name),
+  }),
+);
+
 export const posts = pgTable(
   "post",
   {
@@ -39,3 +51,9 @@ export const posts = pgTable(
     nameIndex: index("name_idx").on(example.name),
   }),
 );
+
+export const postTags = pgTable("postTag", {
+  id: serial("id").primaryKey(),
+  postId: integer("postId").references(() => posts.id),
+  tagId: integer("tagId").references(() => tags.id),
+});

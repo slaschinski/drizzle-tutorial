@@ -15,7 +15,11 @@ export function CreatePost({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        handlePost(name, categoryId).catch((e) => console.log(e));
+        handlePost(name, categoryId)
+          .then(() => {
+            location.reload();
+          })
+          .catch((e) => console.log(e));
       }}
       className="flex flex-col gap-2"
     >
@@ -26,13 +30,25 @@ export function CreatePost({
         onChange={(e) => setName(e.target.value)}
         className="w-full rounded-full px-4 py-2 text-black"
       />
-      {categories ? (
-        categories.map((category) => {
-          return <p key={category.value}>{category.name}</p>;
-        })
-      ) : (
-        <p>No category available</p>
-      )}
+      <select
+        className="text-black"
+        onChange={(event) => {
+          setCategoryId(parseInt(event.currentTarget.value));
+        }}
+      >
+        {categories ? (
+          categories.map((category) => {
+            return (
+              <option key={category.value} value={category.value}>
+                {category.name}
+              </option>
+            );
+            //return <p key={category.value}>{category.name}</p>;
+          })
+        ) : (
+          <option value={0}>No category available</option>
+        )}
+      </select>
       <button
         type="submit"
         className="rounded-full bg-white/10 px-10 py-3 font-semibold transition hover:bg-white/20"

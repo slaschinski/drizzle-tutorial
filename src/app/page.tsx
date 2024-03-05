@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import test from "node:test";
 import { CreatePost } from "~/app/_components/create-post";
 import { db } from "~/server/db";
-import { categories, posts } from "~/server/db/schema";
+import { categories, postTags, posts, tags } from "~/server/db/schema";
 
 export default function Home() {
   return (
@@ -22,7 +22,9 @@ async function CrudShowcase() {
   const fetchedPostsWithCategories = await db
     .select()
     .from(posts)
-    .leftJoin(categories, eq(posts.categoryId, categories.id));
+    .leftJoin(categories, eq(posts.categoryId, categories.id))
+    .leftJoin(postTags, eq(posts.id, postTags.postId))
+    .leftJoin(tags, eq(postTags.tagId, tags.id));
 
   const categoriesFromDb = await db
     .select({
@@ -38,7 +40,8 @@ async function CrudShowcase() {
           fetchedPostsWithCategories.map((postWithCategory) => {
             return (
               <p key={postWithCategory.post.id} className="truncate">
-                {postWithCategory.post.name} - {postWithCategory.category?.name}
+                {postWithCategory.post.name} - {postWithCategory.category?.name}{" "}
+                - {postWithCategory.tag?.name ?? "No tag"}
               </p>
             );
           })
