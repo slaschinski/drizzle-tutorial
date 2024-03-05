@@ -32,7 +32,7 @@ export const posts = pgTable(
   "post",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
+    name: varchar("name", { length: 256 }).notNull(),
     categoryId: integer("categoryId").references(() => categories.id),
   },
   (example) => ({

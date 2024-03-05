@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import test from "node:test";
 import { CreatePost } from "~/app/_components/create-post";
 import { db } from "~/server/db";
 import { categories, posts } from "~/server/db/schema";
@@ -23,6 +24,13 @@ async function CrudShowcase() {
     .from(posts)
     .leftJoin(categories, eq(posts.categoryId, categories.id));
 
+  const categoriesFromDb = await db
+    .select({
+      name: categories.name,
+      value: categories.id,
+    })
+    .from(categories);
+
   return (
     <div className="w-full max-w-xs">
       <div className="mb-2">
@@ -39,7 +47,7 @@ async function CrudShowcase() {
         )}
       </div>
 
-      <CreatePost />
+      <CreatePost categories={categoriesFromDb} />
     </div>
   );
 }
