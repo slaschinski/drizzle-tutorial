@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
 import { CreatePost } from "~/app/_components/create-post";
 import { db } from "~/server/db";
-import { posts } from "~/server/db/schema";
+import { categories, posts } from "~/server/db/schema";
 
 export default function Home() {
   return (
@@ -17,16 +18,19 @@ export default function Home() {
 }
 
 async function CrudShowcase() {
-  const fetchedPosts = await db.select().from(posts);
+  const fetchedPostsWithCategories = await db
+    .select()
+    .from(posts)
+    .leftJoin(categories, eq(posts.categoryId, categories.id));
 
   return (
     <div className="w-full max-w-xs">
       <div className="mb-2">
-        {fetchedPosts.length > 0 ? (
-          fetchedPosts.map((post) => {
+        {fetchedPostsWithCategories.length > 0 ? (
+          fetchedPostsWithCategories.map((postWithCategory) => {
             return (
-              <p key={post.id} className="truncate">
-                {post.name}
+              <p key={postWithCategory.post.id} className="truncate">
+                {postWithCategory.post.name} - {postWithCategory.category?.name}
               </p>
             );
           })

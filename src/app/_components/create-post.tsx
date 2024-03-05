@@ -10,7 +10,7 @@ export function CreatePost() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        handlePost();
+        handlePost().catch((e) => console.log(e));
       }}
       className="flex flex-col gap-2"
     >
